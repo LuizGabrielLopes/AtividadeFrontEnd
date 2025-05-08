@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Pagination } from 'antd';
 
 import CountryCard from "../../components/CountryCard";
 import CountryModal from "../../components/CountryModal";
@@ -15,6 +16,9 @@ export default function Countries() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [allCountries, setAllCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
 
   const fetchCountries = async (region = "") => {
     setIsLoading(true);
@@ -40,6 +44,26 @@ export default function Countries() {
 
   const resetFilter = () => fetchCountries();
 
+  const App = ({ totalItems, itemsPerPage, onPageChange }) => {
+    return (
+      <Pagination
+      current={currentPage} 
+      total={totalItems}
+      pageSize={itemsPerPage}
+      onChange={onPageChange}
+    />
+    );
+  };
+    
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedCountries = countries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className={styles.container}>
       <h1>Lista de Países do Mundo</h1>
@@ -57,12 +81,17 @@ export default function Countries() {
           Mostrar Todos
         </button>
       </div>
-
+      <App
+        totalItems={countries.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
+      
       <div className={styles.cardContainer}>
         {isLoading ? (
           <Loading />
         ) : (
-          countries.map((country, index) => (
+          paginatedCountries.map((country, index) => (
             <CountryCard
               key={index}
               country={country}
