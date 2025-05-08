@@ -8,7 +8,8 @@ import CountryCard from "../../components/CountryCard";
 import CountryModal from "../../components/CountryModal";
 import Loading from "../../components/Loading";
 import styles from "./Countries.module.css";
-
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 const regions = ["africa", "americas", "antarctic", "asia", "europe", "oceania"];
 
 export default function Countries() {
@@ -64,15 +65,30 @@ export default function Countries() {
     currentPage * itemsPerPage
   );
 
+  const countryClick = (message) => {
+    toast.info(`Você clicou em: ${message}`, {
+      position: "bottom-left",
+      autoClose: 8000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
+  }
+
   return (
     <div className={styles.container}>
+      <ToastContainer />
       <h1>Lista de Países do Mundo</h1>
       <div>
         {regions.map((region) => (
           <button
             key={region}
             className={styles.button}
-            onClick={() => fetchCountries(region)}
+            onClick={() => { fetchCountries(region); countryClick("Você clicou na região: " + region.charAt(0).toUpperCase() + region.slice(1))
+            }
+          }
           >
             {region.charAt(0).toUpperCase() + region.slice(1)}
           </button>
